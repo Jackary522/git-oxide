@@ -41,7 +41,6 @@ impl GitObjMethods for GitObject {
 
 impl GitObject {
     fn object_read(repo: &GitRepo, sha: &str) -> Result<Self, Error> {
-        // TODO verify that the sha[0..2] & sha[2..] .to_string() appropriately handles as expected.
         let path: PathBuf = repo_file(&repo, vec!["objects".to_string(), sha[0..2].to_string(), sha[2..].to_string()], true);
     
         if !path.is_file() {
@@ -88,6 +87,4 @@ impl GitObject {
         let hash = hasher.finalize();
         Ok(format!("{:X}", hash))
     }
-
-
 }
