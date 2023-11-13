@@ -7,7 +7,7 @@ use std::path::{Path, PathBuf};
 
 use super::UserInput;
 
-// TODO Remove .unwraps with Ok() => ... or println!(ErrMsg); process:exit(1);
+// TODO Remove .unwraps with Ok() => ...
 
 pub struct GitRepo {
     worktree: PathBuf,
@@ -113,7 +113,7 @@ pub fn repo_create(path: &str) -> GitRepo {
 fn repo_default_config() -> Ini {
     let mut ret: Ini = Ini::new();
 
-    ret.set("core", "repositoryformatversion", Some("0.0".to_string()));
+    ret.set("core", "repositoryformatversion", Some("0".to_string()));
     ret.set("core", "filemode", Some("false".to_string()));
     ret.set("core", "bare", Some("false".to_string()));
 

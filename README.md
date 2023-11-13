@@ -2,6 +2,9 @@
 ## Overview
 This Rust-based Git client offers a range of functionalities for interacting with Git repositories. It is designed to provide a comprehensive and efficient way to manage Git operations, taking advantage of Rust's performance and safety features.
 
+### IMPORTANT NOTE: 
+The sections of this project that currently are working is the git repository initialization and object instantiation. This alone will provide a scaffold that allows interoperability with git and allow git commands to be run against that repo. This is minimum functionality and more will be added soon.
+
 ## Features
 __Repository Initialization:__ Initialize new Git repositories with necessary directory structure and default configuration.
 
