@@ -1,70 +1,85 @@
-use clap::{Parser, Subcommand, Args};
+#![warn(clippy::pedantic)]
 
-mod rusty_git;
+mod repo_files;
+mod repo_init;
+mod repo_obj;
 
-#[derive(Debug, Parser)]
-#[clap(author, version, about)]
-struct Kwargs {
-    #[clap(subcommand)]
-    command: CommandType,
+use crate::repo_files::{cat_file, clone_repo, commit_tree, hash_object, ls_tree, write_tree};
+use crate::repo_init::initialize_git_dir;
+use clap::{Parser, Subcommand};
+
+#[derive(Parser)]
+struct Commandline {
+    #[command(subcommand)]
+    command: Option<Commands>,
 }
 
-#[derive(Debug, Args)]
-pub struct UserInput {
-    input: Vec<String>,
-}
-
-#[derive(Debug, Subcommand)]
-enum CommandType {
-    /// Add file contents to the index
-    Add(UserInput),
-    /// Provide content or type and size information for repository objects
-    CatFile(UserInput),
-    /// Will update HEAD to set the specified branch as the current branch
-    Checkout(UserInput),
-    /// Debug gitignore / exclude files
-    CheckIgnore(UserInput),
-    /// Record changes to the repository
-    Commit(UserInput),
-    /// Compute object ID and optionally create an object from a file
-    HashObject(UserInput),
-    /// Initialize a new, empty repository
-    Init(UserInput),
-    /// Show commit logs
-    Log(UserInput),
-    /// Show information about files in the index and the working tree
-    LsFiles(UserInput),
-    /// List the contents of a tree object
-    LsTree(UserInput),
-    /// Pick out and massage parameters
-    RevParse(UserInput),
-    /// Remove files from the working tree and from the index
-    Rm(UserInput),
-    /// List references in a local repository
-    ShowRef(UserInput),
-    /// Show the working tree status
-    Status(UserInput),
-    /// Create, list, delete or verify a tag object signed with GPG
-    Tag(UserInput),
+#[derive(Subcommand)]
+enum Commands {
+    /// Initialize a Git directory
+    // #[arg(short)]
+    Init,
+    /// Print the contents of a hashed file
+    CatFile {
+        /// The hash of the hashed file to be read
+        #[arg(name = "hash")]
+        hash: String,
+    },
+    /// Hash a Git object
+    HashObject {
+        /// The object to hash
+        #[arg(name = "object")]
+        object: String,
+    },
+    /// List a Git tree object
+    LsTree {
+        /// The hash of the Git tree object
+        #[arg(name = "tree_hash")]
+        tree_hash: String,
+        /// Print only the tree leaf names
+        #[arg(long, action)]
+        name_only: bool,
+    },
+    /// Write a Git tree object
+    WriteTree,
+    /// Commit a Git tree object
+    CommitTree {
+        /// The Sha1 encoded string for a Git tree object
+        #[arg(name = "tree_sha")]
+        tree_sha: String,
+        /// The Sha1 encoded string for a Git commit object
+        #[arg(name = "commit_sha", short = 'p')]
+        commit_sha: String,
+        /// The message to accompany the commit
+        #[arg(name = "message", short = 'm')]
+        message: String,
+    },
+    /// Clone an existing repository
+    Clone {
+        /// The URL of the existing repository
+        #[arg(name = "url")]
+        url: String,
+    },
 }
 fn main() {
-    let kwargs: Kwargs = Kwargs::parse();
-
-    match kwargs.command {
-        CommandType::Add(input) => rusty_git::cmd_add(input),
-        CommandType::CatFile(_) => rusty_git::cmd_cat_file(),
-        CommandType::Checkout(input) => rusty_git::cmd_checkout(input),
-        CommandType::CheckIgnore(_) => rusty_git::cmd_check_ignore(),
-        CommandType::Commit(_) => rusty_git::cmd_commit(),
-        CommandType::HashObject(_) => rusty_git::cmd_hash_object(),
-        CommandType::Init(input) => rusty_git::cmd_init(input),
-        CommandType::Log(_) => rusty_git::cmd_log(),
-        CommandType::LsFiles(_) => rusty_git::cmd_ls_files(),
-        CommandType::LsTree(_) => rusty_git::cmd_ls_tree(),
-        CommandType::RevParse(_) => rusty_git::cmd_rev_parse(),
-        CommandType::Rm(_) => rusty_git::cmd_rm(),
-        CommandType::ShowRef(_) => rusty_git::cmd_show_ref(),
-        CommandType::Status(_) => rusty_git::cmd_status(),
-        CommandType::Tag(_) => rusty_git::cmd_tag(),
-    };
+    let args = Commandline::parse();
+    match args.command {
+        Some(command) => match command {
+            Commands::Init => initialize_git_dir(),
+            Commands::CatFile { hash } => cat_file(&hash),
+            Commands::HashObject { object } => hash_object(&object, "blob"),
+            Commands::LsTree {
+                name_only,
+                tree_hash,
+            } => ls_tree(name_only, &tree_hash),
+            Commands::WriteTree => write_tree(),
+            Commands::CommitTree {
+                tree_sha,
+                commit_sha,
+                message,
+            } => commit_tree(&tree_sha, &commit_sha, &message),
+            Commands::Clone { url } => clone_repo(&url),
+        },
+        None => println!("No command was given! Try again."),
+    }
 }
