@@ -1,11 +1,15 @@
 #![warn(clippy::pedantic)]
 
-mod repo_files;
-mod repo_init;
-mod repo_obj;
+mod lib {
+    pub mod repo_commit;
+    pub mod repo_files;
+    pub mod repo_init;
+    pub mod repo_objects;
+}
 
-use crate::repo_files::{cat_file, clone_repo, commit_tree, hash_object, ls_tree, write_tree};
-use crate::repo_init::initialize_git_dir;
+use crate::lib::repo_commit::{clone_repo, commit_tree};
+use crate::lib::repo_files::{cat_file, hash_object, ls_tree, write_tree};
+use crate::lib::repo_init::initialize_git_dir;
 use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
@@ -21,15 +25,18 @@ enum Commands {
     Init,
     /// Print the contents of a hashed file
     CatFile {
-        /// The hash of the hashed file to be read
+        /// The hash to be read
         #[arg(name = "hash")]
         hash: String,
     },
-    /// Hash a Git object
+    /// Hash a Git object either to console or file
     HashObject {
         /// The object to hash
         #[arg(name = "object")]
         object: String,
+        /// Hash object to file
+        #[arg(long, short, action)]
+        write: bool,
     },
     /// List a Git tree object
     LsTree {
@@ -67,7 +74,9 @@ fn main() {
         Some(command) => match command {
             Commands::Init => initialize_git_dir(),
             Commands::CatFile { hash } => cat_file(&hash),
-            Commands::HashObject { object } => hash_object(&object, "blob"),
+            Commands::HashObject { object, write } => {
+                hash_object(&object, lib::repo_objects::ObjectType::Blob, write);
+            }
             Commands::LsTree {
                 name_only,
                 tree_hash,
