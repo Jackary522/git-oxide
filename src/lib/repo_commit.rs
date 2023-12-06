@@ -1,7 +1,6 @@
-use crate::lib::repo_objects::write_compressed;
-use std::time::{SystemTime, UNIX_EPOCH};
+use super::repo_objects::{compress_object, write_compressed};
 use git2::Repository;
-use super::repo_objects::compress_object;
+use std::time::{SystemTime, UNIX_EPOCH};
 
 pub fn commit_tree(parent: &str, message: &str, tree_hash: &str) {
     let timestamp = SystemTime::now()
@@ -32,8 +31,6 @@ pub fn commit_tree(parent: &str, message: &str, tree_hash: &str) {
 
 /// Clones a repository to directory
 pub fn clone_repo(url: &str) {
-    match Repository::clone(url, ".") {
-      Ok(_) => (),
-      Err(_) => panic!("An error occurred while trying to clone repository."),
-    }
+    Repository::clone(url, ".")
+        .expect("An error has occurred while attempting the clone the repository.");
 }
