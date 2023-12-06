@@ -2,6 +2,13 @@ use super::repo_objects::{compress_object, write_compressed};
 use git2::Repository;
 use std::time::{SystemTime, UNIX_EPOCH};
 
+/// Creates a Git commit object and writes it to a file
+///
+/// # Example
+///
+/// ```rust
+///
+/// ```
 pub fn commit_tree(parent: &str, message: &str, tree_hash: &str) {
     let timestamp = SystemTime::now()
         .duration_since(UNIX_EPOCH)
@@ -29,7 +36,13 @@ pub fn commit_tree(parent: &str, message: &str, tree_hash: &str) {
     write_compressed(&compressed_object.hash_str, &compressed_object.content);
 }
 
-/// Clones a repository to directory
+/// Clones an existing repository given the URL
+///
+/// # Example
+///
+/// ```rust
+///
+/// ```
 pub fn clone_repo(url: &str) {
     Repository::clone(url, ".")
         .expect("An error has occurred while attempting the clone the repository.");

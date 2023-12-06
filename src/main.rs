@@ -8,7 +8,7 @@ mod lib {
 }
 
 use crate::lib::repo_commit::{clone_repo, commit_tree};
-use crate::lib::repo_files::{cat_file, hash_object, ls_tree, write_tree};
+use crate::lib::repo_files::{cat_file, hash_object, ls_tree, print_tree};
 use crate::lib::repo_init::initialize_git_dir;
 use clap::{Parser, Subcommand};
 
@@ -81,7 +81,7 @@ fn main() {
                 name_only,
                 tree_hash,
             } => ls_tree(name_only, &tree_hash),
-            Commands::WriteTree => write_tree(),
+            Commands::WriteTree => print_tree(),
             Commands::CommitTree {
                 tree_sha,
                 commit_sha,

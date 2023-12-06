@@ -28,19 +28,6 @@ pub fn cat_file(hash: &str) {
     print!("{}", &content);
 }
 
-/// Takes a hase and writes it to a file
-///
-/// This function is only used within the `hash_object` function
-// fn hash_to_file(hash: &str, content: &[u8]) {
-//     let mut encoder = ZlibEncoder::new(vec![], Compression::default());
-//     encoder
-//         .write_all(content)
-//         .expect("An error occurred during encoding.");
-//     let compressed_content = encoder
-//         .finish()
-//         .expect("An error occurred during encoding.");
-// }
-
 /// Hashes a string as a Git object (Blob, Tree, Commit)
 ///
 /// # Example
@@ -101,6 +88,13 @@ pub fn ls_tree(name_only: bool, hash: &str) {
     println!("{}", &output);
 }
 
+/// Creates a compressed Git tree object
+///
+/// # Example
+///
+/// ```rust
+///
+/// ```
 pub fn create_tree(path: &str) -> CompressedObject {
     let entries = fs::read_dir(path).expect("An error occurred while reading a directory.");
     let mut objects: Vec<CompressedObject> = vec![];
@@ -137,8 +131,14 @@ pub fn create_tree(path: &str) -> CompressedObject {
     compressed_tree
 }
 
-/// Writes the directory tree as a hash
-pub fn write_tree() {
+/// Prints a compressed Git tree object hash string
+///
+/// # Example
+///
+/// ```rust
+///
+/// ```
+pub fn print_tree() {
     let compressed_tree = create_tree("./");
     println!("{}", compressed_tree.hash_str);
 }

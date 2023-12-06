@@ -14,6 +14,7 @@ pub enum ObjectType {
     Commit,
 }
 
+/// Implements the Display trait for the ObjectType enum
 impl Display for ObjectType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &self {
@@ -25,6 +26,13 @@ impl Display for ObjectType {
 }
 
 impl ObjectType {
+    /// Returns a mode string for a given ObjectType
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    ///
+    /// ```
     fn mode(&self) -> String {
         match &self {
             ObjectType::Blob => String::from("100644"),
@@ -34,12 +42,13 @@ impl ObjectType {
     }
 }
 
-// TODO comment this struct
+/// General Git object structure
 pub struct Object {
     pub content: String,
     pub object_type: ObjectType,
 }
 
+/// Git compressed object structure
 pub struct CompressedObject {
     pub content: Vec<u8>,
     pub object_type: ObjectType,
@@ -48,7 +57,13 @@ pub struct CompressedObject {
     pub path: Option<String>,
 }
 
-// TODO comment this function
+/// Reads a hashed Git object and returns the decoded object
+///
+/// # Example
+///
+/// ```rust
+///
+/// ```
 pub fn read_object(hash: &str) -> Object {
     let subpath = format!("{}/{}", &hash[..2], &hash[2..]);
     let path = format!("{}/{}", ".git/objects", subpath);
@@ -56,13 +71,13 @@ pub fn read_object(hash: &str) -> Object {
     let file = fs::File::open(path).expect("An error occurred while reading object.");
     let buffer = BufReader::new(file);
 
-    let mut decompressed_content = Vec::new();
+    let mut content = Vec::new();
     let mut decoder = ZlibDecoder::new(buffer);
     decoder
-        .read_to_end(&mut decompressed_content)
+        .read_to_end(&mut content)
         .expect("An error occurred while decoding file.");
 
-    let decompressed_content = String::from_utf8_lossy(&decompressed_content);
+    let decompressed_content = String::from_utf8_lossy(&content);
     let (header, content) = decompressed_content
         .split_once('\0')
         .expect("Object header corrupted.");
@@ -83,12 +98,26 @@ pub fn read_object(hash: &str) -> Object {
     }
 }
 
+/// Generates a content hash
+///
+/// # Example
+///
+/// ```rust
+///
+/// ```
 pub fn generate_hash(content: &Vec<u8>) -> [u8; 20] {
     Sha1::digest(content)[..20]
         .try_into()
         .expect("An error occurred while hashing content.")
 }
 
+/// Compresses a Git object's contents
+///
+/// # Example
+///
+/// ```rust
+///
+/// ```
 pub fn compress_content(content: &[u8]) -> Vec<u8> {
     let mut encoder = ZlibEncoder::new(vec![], Compression::default());
     encoder
@@ -99,6 +128,13 @@ pub fn compress_content(content: &[u8]) -> Vec<u8> {
         .expect("An error occurred during encoding.")
 }
 
+/// Compresses a Git object
+///
+/// # Example
+///
+/// ```rust
+///
+/// ```
 pub fn compress_object(
     content: &[u8],
     object_type: ObjectType,
@@ -118,19 +154,47 @@ pub fn compress_object(
     }
 }
 
+/// Utility for reading a file
+///
+/// # Example
+///
+/// ```rust
+///
+/// ```
 pub fn read_file(path: &str) -> Vec<u8> {
     fs::read(path).expect("An error occurred while reading a file.")
 }
 
+/// Reads an object and returns it compressed
+///
+/// # Example
+///
+/// ```rust
+///
+/// ```
 pub fn read_and_compress(path: &str, object_type: ObjectType) -> CompressedObject {
     let content = read_file(path);
     compress_object(&content, object_type, Some(path))
 }
 
+/// Generates an object header
+///
+/// # Example
+///
+/// ```rust
+///
+/// ```
 pub fn object_header(content_len: usize, object_type: &ObjectType) -> String {
     format!("{} {}\0", object_type, &content_len)
 }
 
+/// Writes compressed content to a file
+///
+/// # Example
+///
+/// ```rust
+///
+/// ```
 pub fn write_compressed(hash: &str, compressed_content: &Vec<u8>) {
     let (dir, object) = hash.split_at(2);
     let dir_path = format!("{}/{}", ".git/objects", dir);
@@ -142,6 +206,13 @@ pub fn write_compressed(hash: &str, compressed_content: &Vec<u8>) {
     fs::write(object_path, compressed_content).expect("An error occured while writing object.");
 }
 
+/// Formats a Git tree object
+///
+/// # Example
+///
+/// ```rust
+///
+/// ```
 pub fn tree_format(tree: &Vec<CompressedObject>) -> Vec<u8> {
     let mut formatted_tree: Vec<Vec<u8>> = vec![];
     for object in tree {
