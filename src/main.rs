@@ -54,9 +54,9 @@ enum Commands {
         /// The Sha1 encoded string for a Git tree object
         #[arg(name = "tree_sha")]
         tree_sha: String,
-        /// The Sha1 encoded string for a Git commit object
-        #[arg(name = "commit_sha", short = 'p')]
-        commit_sha: String,
+        // /// The Sha1 encoded string for a Git commit object
+        // #[arg(name = "commit_sha", short = 'p')]
+        // commit_sha: String,
         /// The message to accompany the commit
         #[arg(name = "message", short = 'm')]
         message: String,
@@ -83,10 +83,10 @@ fn main() {
             } => ls_tree(name_only, &tree_hash),
             Commands::WriteTree => print_tree(),
             Commands::CommitTree {
-                tree_sha,
-                commit_sha,
+                // commit_sha,
                 message,
-            } => commit_tree(&tree_sha, &commit_sha, &message),
+                tree_sha,
+            } => commit_tree(None, &message, &tree_sha),
             Commands::Clone { url } => clone_repo(&url),
         },
         None => println!("No command was given! Try again."),

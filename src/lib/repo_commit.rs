@@ -9,13 +9,18 @@ use std::time::{SystemTime, UNIX_EPOCH};
 /// ```rust
 ///
 /// ```
-pub fn commit_tree(parent: &str, message: &str, tree_hash: &str) {
+pub fn commit_tree(parent: Option<&str>, message: &str, tree_hash: &str) {
     let timestamp = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .expect("An error occurred while computing current timestamp.")
         .as_millis();
 
     let author = format!("Jack Hatton <jack.hatton522@gmail.com> {timestamp} +0300");
+
+    let parent = match parent {
+        Some(parent) => parent,
+        None => " "
+    };
 
     let content = format!(
         "tree {tree_hash}\n\
