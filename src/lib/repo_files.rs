@@ -33,9 +33,10 @@ pub fn hash_object(object: &str, object_type: ObjectType, write: bool) {
     } = read_and_compress(object, object_type);
 
     if write {
+        println!("{hash_str}");
         write_compressed(&hash_str, &content);
     } else {
-        print!("{hash_str}");
+        println!("{hash_str}");
     }
 }
 
