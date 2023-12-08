@@ -1,6 +1,11 @@
 //! `repo_files`
 //!
-//! Handles file operations for `rusty_git`
+//! Manages file operations for `rusty_git`. This module includes functions to interact
+//! with the file system as part of the Git-like operations. Functions include printing
+//! the content of Git objects based on their hash, creating tree objects from directories,
+//! and initializing a new Git repository structure. This module works closely with
+//! `repo_objects` to manage the file-based aspects of Git objects, providing a higher-level
+//! interface for repository operations.
 
 use super::repo_objects::{
     compress_object, read_and_compress, read_object, tree_format, write_compressed,
@@ -9,17 +14,6 @@ use super::repo_objects::{
 use std::fs;
 
 /// Prints a hashed file to the console
-///
-/// # Example
-///
-/// Basic usage:
-///
-/// ```rust
-/// # use crate::lib::repo_files::cat_hash;
-///
-/// let hash = "d719fc22c485f069dea93469f4ea92ccd42cfeb7"; // TODO This doctest doesn't work
-/// cat_file(hash);
-/// ```
 pub fn cat_file(hash: &str) {
     let Object {
         content,
@@ -28,15 +22,7 @@ pub fn cat_file(hash: &str) {
     print!("{}", &content);
 }
 
-/// Hashes a string as a Git object (Blob, Tree, Commit)
-///
-/// # Example
-///
-/// ```rust
-/// # use crate::repo_files::hash_object;
-///
-/// hash_object("foo", "blob", false);
-/// ```
+/// Hashes a given string as a Git object (Blob, Tree, Commit) and optionally writes it to the repository.
 pub fn hash_object(object: &str, object_type: ObjectType, write: bool) {
     let CompressedObject {
         hash: _,
@@ -53,14 +39,7 @@ pub fn hash_object(object: &str, object_type: ObjectType, write: bool) {
     }
 }
 
-/// Lists a Git tree object
-/// - either the tree with contents, or just leaf names
-///
-/// # Example
-///
-/// ```rust
-///
-/// ```
+/// Lists the contents of a Git tree object. If `name_only` is true, it prints only the names of the items in the tree; otherwise, it prints detailed information.
 pub fn ls_tree(name_only: bool, hash: &str) {
     let Object {
         content,
@@ -88,13 +67,7 @@ pub fn ls_tree(name_only: bool, hash: &str) {
     println!("{}", &output);
 }
 
-/// Creates a compressed Git tree object
-///
-/// # Example
-///
-/// ```rust
-///
-/// ```
+/// Creates a compressed Git tree object from a directory path. It reads the directory, compresses its contents as Git objects, and then forms a tree object.
 pub fn create_tree(path: &str) -> CompressedObject {
     let entries = fs::read_dir(path).expect("An error occurred while reading a directory.");
     let mut objects: Vec<CompressedObject> = vec![];
@@ -131,13 +104,7 @@ pub fn create_tree(path: &str) -> CompressedObject {
     compressed_tree
 }
 
-/// Prints a compressed Git tree object hash string
-///
-/// # Example
-///
-/// ```rust
-///
-/// ```
+/// Prints the hash string of a compressed Git tree object for the current directory.
 pub fn print_tree() {
     let compressed_tree = create_tree("./");
     println!("{}", compressed_tree.hash_str);
