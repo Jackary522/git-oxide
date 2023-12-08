@@ -11,7 +11,7 @@ The main goal of `rusty_git` is to create a functional, lightweight version cont
 - Compressing and decompressing Git objects
 - Basic repository operations such as listing contents, creating tree objects, and cloning repositories
 
-[INSERT DEMO VIDEO HERE]
+https://github.com/Jackary522/git-client-rust/assets/84044652/f2b77a1c-2f85-425b-a916-485380fbddbf
 
 ## Getting Started
 
