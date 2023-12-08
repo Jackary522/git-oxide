@@ -1,51 +1,56 @@
-# Rust Git Client
-## Overview
-This Rust-based Git client offers a range of functionalities for interacting with Git repositories. It is designed to provide a comprehensive and efficient way to manage Git operations, taking advantage of Rust's performance and safety features.
+# rusty_git
 
-### IMPORTANT NOTE: 
-The sections of this project that currently are working is the git repository initialization and object instantiation. This alone will provide a scaffold that allows interoperability with git and allow git commands to be run against that repo. This is minimum functionality and more will be added soon.
+## Introduction
+Welcome to `rusty_git`, a Git-like version control system implemented in Rust. This project is designed to provide a simplified yet powerful interface for managing version control, leveraging the efficiency and safety of Rust. `rusty_git` is perfect for those who are familiar with Git and are looking for a system that incorporates Rust's modern features.
 
-## Features
-__Repository Initialization:__ Initialize new Git repositories with necessary directory structure and default configuration.
+## Project Purpose and Goals
+The main goal of `rusty_git` is to create a functional, lightweight version control system that mimics key functionalities of Git. Key features include:
 
-__Git Objects Handling__: Read and write Git objects with support for compression and SHA1 hashing.
+- Initializing new repositories
+- Creating and handling various Git objects like blobs, trees, and commits
+- Compressing and decompressing Git objects
+- Basic repository operations such as listing contents, creating tree objects, and cloning repositories
 
-__File and Directory Management__: Functions to manage files and directories within a Git repository.
+[INSERT DEMO VIDEO HERE]
 
-__User Commands__: A set of commands for various Git operations, currently placeholders for future implementation.
+## Getting Started
 
-## Modules
-`repo_init`: Handles initialization and configuration of Git repositories.
+### Prerequisites
+- Rust and Cargo (latest stable version)
+- Basic familiarity with Rust and command-line operations
 
-`repo_obj`: Defines the GitObject structure and methods for managing Git objects.
+### Building the Project
+1. **Clone the Repository**: Start by cloning `rusty_git` to your local machine.
+   ```
+   git clone https://github.com/Jackary522/git-client-rust.git
+   cd rusty_git
+   ```
 
-## Structs and Traits
-`GitRepo`: Represents a Git repository with worktree, git directory, and configuration.
+2. **Build the Project**: Use Cargo to build the project.
+   ```
+   cargo build --release
+   ```
 
-`GitObject`: Represents a Git object with associated data and format.
+3. **Run Tests**: (Optional) Run the tests to ensure everything is working as expected.
+   ```
+   cargo test
+   ```
 
-`GitObjMethods` (trait): Provides methods for initializing, serializing, and deserializing Git objects.
+### Running the Project
+After building, you can run `rusty_git` directly through Cargo:
+```
+cargo run -- [COMMAND]
+```
 
-## Key Functions
-`object_read`: Read a Git object from the repository.
+Or as an executable:
+```
+./target/release/rusty_git [COMMAND]
+```
 
-`object_write`: Write a Git object to the repository, returning its SHA1 hash.
+Replace `[COMMAND]` with the desired operation (e.g., `init`, `cat-file`, `clone`). For a list of all commands and their descriptions, use:
+```
+cargo run -- --help
+```
 
-`repo_create`: Create a new repository at a specified path.
-
-`repo_file`, `repo_path`, `repo_dir`: Utility functions for file and directory management within a Git repository.
-
-## Dependencies
-`flate2`: For compression and decompression of data.
-
-`sha1`: For computing SHA1 hashes.
-
-`configparser`: For handling configuration files.
-
-`std::io`, `std::fs`, `std::path`: Standard library modules for file I/O and path management.
-
-## Usage
-The client is currently under development. The provided functions and structures form the core of the Git client, with user-facing commands to be implemented. Each function is marked with todo!() or a similar placeholder for future code.
-
-## Disclaimer
-This client is in the early stages of development and is not yet suitable for production use.
+## License
+This project is licensed under the [MIT License](LICENSE).
